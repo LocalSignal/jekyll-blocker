@@ -54,4 +54,4 @@ module JekyllBlocker
   end
 end
 
-Liquid::Template.register_tag('block', Lowest::BlockTag)
+Liquid::Template.register_tag('block', JekyllBlocker::BlockTag)
