@@ -5,8 +5,8 @@ module JekyllBlocker
     end
 
     def run
-      raise ContainsBlockerFolder if Dir.exist?(blocker_path)
-      raise NotJekyllSite unless File.exist?(File.join(@folder, "_config.yml")) &&
+      raise ContainsBlockerFolderError if Dir.exist?(blocker_path)
+      raise NotJekyllSiteError unless File.exist?(File.join(@folder, "_config.yml")) &&
                                  File.exist?(File.join(@folder, "Gemfile"))
 
       blocks_path = File.join(blocker_path, "blocks")
@@ -44,7 +44,7 @@ module JekyllBlocker
     def empty_page_yml
       <<~HERE
         blocks: []
-        block: []
+        block_containers: []
       HERE
     end
   end

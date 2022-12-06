@@ -8,7 +8,7 @@ class TestBlockerNewAction < Minitest::Test
     tmp_path = File.expand_path(File.join("tmp", SecureRandom.uuid))
     FileUtils.mkdir_p(tmp_path) unless Dir.exist?(tmp_path)
 
-    assert_raises(JekyllBlocker::NotJekyllSite) do
+    assert_raises(JekyllBlocker::NotJekyllSiteError) do
       JekyllBlocker::BlockerNewAction.new(tmp_path).run
     end
 
@@ -21,7 +21,7 @@ class TestBlockerNewAction < Minitest::Test
 
     FileUtils.mkdir(File.join(tmp_path, "_blocker"))
 
-    assert_raises(JekyllBlocker::ContainsBlockerFolder) do
+    assert_raises(JekyllBlocker::ContainsBlockerFolderError) do
       JekyllBlocker::BlockerNewAction.new(tmp_path).run
     end
 

@@ -1,46 +1,61 @@
 module JekyllBlocker
   class PagesGenerator < Jekyll::Generator
     safe true
+    attr_reader :site
 
-    def generate(site)
-      BlockTag.set_blocks(site)
+    def config_path
+      @config_path ||= File.join(site.source, "_blocker", "config")
+    end
 
-      @pages_path = File.join(site.source, "_pages")
-      pages = read_yaml("pages")
+    def pages_path
+      @pages_path ||= File.join(site.source, "_blocker", "pages")
+    end
 
-      # site.pages.select!{|page| page.path =~ /\Aassets#{File::SEPARATOR}/}
+    def generate(_site)
+      Blocks.set_blocks(_site.source)
+      @site = _site
+      pages = read_yaml(config_path, "pages")
 
-      data = get_data(pages["home"])
-      site.pages << VirtualPage.new(site, '/', data)
+      frontmatter = clean_frontmatter(pages, layout: "home")
+      blocks = read_yaml(pages_path, "home")
+      site.pages << VirtualPage.new(site, '/', frontmatter, blocks)
 
-      data = get_data(pages["not_found"])
-      site.pages << VirtualPage.new(site, '/404', data)
+      frontmatter = clean_frontmatter(pages["not_found"], layout: "not_found")
+      blocks = read_yaml(pages_path, "not_found")
+      site.pages << VirtualPage.new(site, '/404', frontmatter, blocks)
 
-      build_pages(site, "", pages["pages"])
+      build_pages(pages["pages"], "")
 
-      redirects = read_yaml("redirects")
+      redirects = read_yaml(config_path, "redirects")
+      return unless redirects
+
       redirects.each do |redirect|
         site.pages << RedirectPage.new(site, redirect["from"], redirect["to"])
       end
     end
 
-    def get_data(info)
-      data = info.reject {|key, value| key == "pages"}
-      data["blocks"] = read_yaml(data["id"])
+    def read_yaml(path, id)
+      YAML.safe_load(
+        File.read(
+          File.join(path, "#{id}.yml")))
+    end
+
+    def clean_frontmatter(info, layout:)
+      data = info.select{|key, value| allowed_keys.include?(key)}
+      data["layout"] = layout if layout
       data
     end
 
-    def read_yaml(id)
-      file_path = File.join(@pages_path, "#{id}.yml")
-      data = File.read(file_path)
-      YAML.safe_load(data)
+    def allowed_keys
+      @allowed_keys ||= %w(id title layout slug description)
     end
 
-    def build_pages(site, base_path, pages)
+    def build_pages(pages, base_path)
       pages.each do |page|
-        data = get_data(page)
-        path = "#{base_path}/#{data["slug"]}"
-        site.pages << VirtualPage.new(site, path, data)
+        frontmatter = clean_frontmatter(page)
+        blocks = read_yaml(pages_path, page["id"])
+        path = "#{base_path}/#{frontmatter["slug"]}"
+        site.pages << VirtualPage.new(site, path, frontmatter, blocks)
         if page["pages"].instance_of?(Array)
           build_pages(site, path, page["pages"])
         end

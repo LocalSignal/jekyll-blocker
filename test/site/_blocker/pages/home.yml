@@ -1,0 +1,19 @@
+block_containers:
+  main:
+    - block: test
+      fields:
+        field1: "This is the header"
+    - block: test
+      fields:
+        field1: "This is also a header"
+  bottom:
+    - id: 1
+      block: footer
+      fields:
+        title: "This is the footer"
+blocks:
+  test: # id
+    block: test
+    fields:
+      field1: "This is the footer"
+
