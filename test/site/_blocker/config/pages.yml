@@ -3,4 +3,20 @@ description: Home Page
 not_found:
   title: Page Not Found
   description: Page Not Found
-pages: []
+pages:
+  - id: 1
+    title: Foo
+    layout: page
+    slug: foo
+    description: This is a foo page
+    pages:
+      - id: 3
+        title: Baz
+        layout: page
+        slug: baz
+        description: This is a baz page
+  - id: 2
+    title: Bar
+    layout: page
+    slug: bar
+    description: This is a bar page

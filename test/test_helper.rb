@@ -12,4 +12,8 @@ def site_path
   @site_path ||= File.expand_path(File.join("test", "site"))
 end
 
+def pages_path
+  @pages_path ||= File.join(site_path, "_blocker", "pages")
+end
+
 JekyllBlocker::Blocks.set_blocks(site_path)

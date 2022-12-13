@@ -20,9 +20,21 @@ module JekyllBlocker
             sub_command.action do |_, options|
               begin
                 BlockerNewAction.new(Dir.pwd).run
-              rescue ContainsBlockerFolder
+              rescue ContainsBlockerFolderError
                 puts "Site already contains blocker folder"
-              rescue NotJekyllSite
+              rescue NotJekyllSiteError
+                puts "Current folder does not appear to be a Jekyll site"
+              end
+            end
+          end
+          c.command(:pages) do |sub_command|
+            sub_command.syntax "blocker pages [options]"
+            sub_command.description 'Show site pages'
+
+            sub_command.action do |_, options|
+              begin
+                BlockerShowPagesAction.new(Dir.pwd).run
+              rescue NotJekyllSiteError
                 puts "Current folder does not appear to be a Jekyll site"
               end
             end

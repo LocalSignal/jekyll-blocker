@@ -15,7 +15,13 @@ module JekyllBlocker
 
       out = ""
       blocks.each do |block|
-        out << BlockRenderer.new(block["block"], block["fields"]).render
+        begin
+          out << BlockRenderer.new(block["block"], block["fields"]).render
+        rescue NamedBlockDoesNotExistError
+          id = context.registers.dig(:page, "id")
+          message = "Block '#{block["block"]}' does not exist in page '#{id}'"
+          raise NamedBlockDoesNotExistError, message
+        end
       end
       out
     end

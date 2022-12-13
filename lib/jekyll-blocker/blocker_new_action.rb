@@ -43,8 +43,8 @@ module JekyllBlocker
 
     def empty_page_yml
       <<~HERE
-        blocks: []
-        block_containers: []
+        blocks: {}
+        block_containers: {}
       HERE
     end
   end

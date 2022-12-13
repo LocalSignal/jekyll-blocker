@@ -7,6 +7,7 @@ module JekyllBlocker
 
     def render
       block = Blocks.find(@name)
+
       raise NamedBlockDoesNotExistError unless block
 
       data = {}
