@@ -11,7 +11,7 @@ module JekyllBlocker
       pages = [["ID", "PATH"]]
       pages_config = ConfigPages.load(blocker_path)
       pages_config.pages.each do |_, page|
-        pages << [page.frontmatter["id"], page.path(pages_config.pages)]
+        pages << [page.frontmatter["blocker_page_id"], page.path(pages_config.pages)]
       end
 
       puts TTY::Table.new(pages).render(:basic, alignments: [:right, :left])

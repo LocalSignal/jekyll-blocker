@@ -19,13 +19,13 @@ module JekyllBlocker
     end
 
     def build_pages
-      pages_config = JekyllBlocker::ConfigPages.load(blocker_path)
+      pages_config = ConfigPages.load(blocker_path)
       pages_config.pages.each do |_, page|
         @site.pages << VirtualPage.new(
                         @site,
                         page.path(pages_config.pages),
                         page.frontmatter,
-                        page.content
+                        page.block_content
                       )
       end
     end

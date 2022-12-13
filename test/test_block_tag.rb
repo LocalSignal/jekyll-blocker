@@ -7,7 +7,7 @@ class TestBlockTag < Minitest::Test
     data = YAML.safe_load(
              File.read(
                File.join(site_path, "_blocker", "pages", "home.yml")))
-    @ctx = {page: { "cms" => data }}
+    @ctx = {page: { "block_content" => data }}
   end
 
   def test_block_tag_using_one_param

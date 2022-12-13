@@ -16,7 +16,7 @@ module JekyllBlocker
     end
 
     def render(context)
-      page = context.registers.dig(:page, "cms", "blocks", @id)
+      page = context.registers.dig(:page, "block_content", "blocks", @id)
 
       return "" unless page.instance_of?(Hash)
       raise BlockTypeDataTypeMissmatchError unless @name == page["block"]

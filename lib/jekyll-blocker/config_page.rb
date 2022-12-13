@@ -38,7 +38,7 @@ module JekyllBlocker
 
     def frontmatter
       {
-        "id" => @id,
+        "blocker_page_id" => @id,
         "slug" => @slug,
         "layout" => @layout,
         "title" => @title,
@@ -46,21 +46,22 @@ module JekyllBlocker
       }
     end
 
-    def content
-      @content ||= begin
-                     file_path = File.join("_blocker", "pages", @id + ".yml")
-                     data = Utilities.read_yaml(@pages_path, @id)
-                     unless data.instance_of?(Hash)
-                       raise PageFileError, "Page Content File is not a hash: #{file_path}"
-                     end
-                     unless data["blocks"].instance_of?(Hash)
-                       raise PageFileError, "Page Content File does not contain a blocks hash: #{file_path}"
-                     end
-                     unless data["block_containers"].instance_of?(Hash)
-                       raise PageFileError, "Page Content File does not contain a block_containers hash: #{file_path}"
-                     end
-                     data
-                   end
+    def block_content
+      @block_content ||= begin
+        file_path = File.join("_blocker", "pages", @id + ".yml")
+        data = Utilities.read_yaml(@pages_path, @id)
+        unless data.instance_of?(Hash)
+          raise PageFileError, "Page Content File is not a hash: #{file_path}"
+        end
+        unless data["blocks"].instance_of?(Hash)
+          raise PageFileError, "Page Content File does not contain a blocks hash: #{file_path}"
+        end
+        unless data["block_containers"].instance_of?(Hash)
+          message = "Page Content File does not contain a block_containers hash: #{file_path}"
+          raise PageFileError, message
+        end
+        data
+      end
     end
 
     def path(pages)
