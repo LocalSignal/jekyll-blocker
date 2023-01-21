@@ -3,10 +3,10 @@
 require "test_helper"
 require "securerandom"
 
-class TestConfigPage < Minitest::Test
+class TestPage < Minitest::Test
   def setup
-    path = File.expand_path(File.join("test", "site", "_blocker"))
-    JekyllBlocker::ConfigPages.blocker_path = path
+    path = File.expand_path(File.join("test", "site"))
+    @config = JekyllBlocker::Config.new path
   end
 
   def test_can_initialize_home
@@ -14,7 +14,7 @@ class TestConfigPage < Minitest::Test
       "title" => "home page title",
       "description" => "home page description",
     }
-    home = JekyllBlocker::ConfigPage.new(data, special: :home)
+    home = JekyllBlocker::Page.new(data, @config, special: :home)
 
     assert_equal "home", home.id
     assert_equal "home", home.layout
@@ -28,7 +28,7 @@ class TestConfigPage < Minitest::Test
       "title" => "not_found page title",
       "description" => "not_found page description",
     }
-    not_found = JekyllBlocker::ConfigPage.new(data, special: :not_found)
+    not_found = JekyllBlocker::Page.new(data, @config, special: :not_found)
 
     assert_equal "not_found", not_found.id
     assert_equal "not_found", not_found.layout
@@ -44,7 +44,7 @@ class TestConfigPage < Minitest::Test
     }
 
     e = assert_raises(JekyllBlocker::ConfigPageError) do
-      JekyllBlocker::ConfigPage.new(data)
+      JekyllBlocker::Page.new(data, @config)
     end
 
     assert_includes e.errors, "No id specified for page"
@@ -62,7 +62,7 @@ class TestConfigPage < Minitest::Test
     }
 
     e = assert_raises(JekyllBlocker::ConfigPageError) do
-      JekyllBlocker::ConfigPage.new(data)
+      JekyllBlocker::Page.new(data, @config)
     end
 
     assert_includes e.errors, "No layout found for page"

@@ -1,8 +1,9 @@
 module JekyllBlocker
   class RedirectPage < Jekyll::Page
-    def initialize(site, from, to)
+    def initialize(site, redirect)
       @site        = site
-      @redirect_to = to
+      @redirect_to = redirect["to"]
+      from = redirect["from"]
       @data = {"layout" => nil}
 
       path = URI.parse(from).path

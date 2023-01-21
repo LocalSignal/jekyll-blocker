@@ -12,8 +12,11 @@ def site_path
   @site_path ||= File.expand_path(File.join("test", "site"))
 end
 
-def pages_path
-  @pages_path ||= File.join(site_path, "_blocker", "pages")
+def run_in_tmp_folder
+  tmp_path = File.expand_path(File.join("tmp", SecureRandom.uuid))
+  config   = JekyllBlocker::Config.new tmp_path
+  FileUtils.mkdir_p(tmp_path)
+  yield config
+  FileUtils.rm_rf(tmp_path)
 end
 
-JekyllBlocker::Blocks.set_blocks(site_path)

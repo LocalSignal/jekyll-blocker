@@ -1,22 +1,20 @@
 module JekyllBlocker
   class BlockRenderer
-    def initialize(name, content)
-      @name = name
+    def initialize(block, content)
+      @block = block
       @content = content
     end
 
     def render
-      block = Blocks.find(@name)
-
-      raise NamedBlockDoesNotExistError unless block
+      raise NamedBlockDoesNotExistError unless @block
 
       data = {}
 
-      block["data"].each do |key, value|
+      @block.data.each do |key, value|
         data[key] = @content.key?(key) ? @content[key] : value["value"]
       end
 
-      template = Liquid::Template.parse(block["content"])
+      template = Liquid::Template.parse(@block.content)
       template.render(data)
     end
   end

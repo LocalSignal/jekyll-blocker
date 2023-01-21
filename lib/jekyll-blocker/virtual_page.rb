@@ -1,14 +1,16 @@
 module JekyllBlocker
   class VirtualPage < Jekyll::Page
-    def initialize(site, path, frontmatter, block_content)
+    attr_accessor :block_content
+
+    def initialize(site, page)
       @site     = site
-      @dir      = path
+      @dir      = page.path
       @basename = 'index'
       @ext      = '.html'
       @name     = 'index.html'
 
-      @data = frontmatter.instance_of?(Hash) ? frontmatter : {}
-      @data["block_content"] = block_content
+      @data          = page.frontmatter.instance_of?(Hash) ? page.frontmatter : {}
+      @block_content = page.block_content.instance_of?(Hash) ? page.block_content : {}
 
       data.default_proc = proc do |_, key|
         site.frontmatter_defaults.find(relative_path, '', key)

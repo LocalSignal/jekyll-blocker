@@ -1,10 +1,10 @@
 module JekyllBlocker
-  class ConfigPage
-    attr_accessor :id, :title, :description, :layout, :slug, :parent
+  class Page
+    attr_accessor :id, :title, :description, :layout, :slug, :path
 
-    def initialize(data, special: nil, parent: nil)
+    def initialize(data, config, special: nil, parent: nil)
       errors = []
-      @pages_path = File.join(ConfigPages.blocker_path, "pages")
+      @config = config
 
       set_special(special) if special
 
@@ -18,7 +18,7 @@ module JekyllBlocker
         errors << "No layout specified for page"
       elsif !File.exist?(
               File.expand_path(
-                File.join(ConfigPages.blocker_path, "..", "_layouts", "#{@layout}.html")))
+                File.join(@config.blocker_path, "..", "_layouts", "#{@layout}.html")))
         errors << "No layout found for page"
       end
 
@@ -33,7 +33,7 @@ module JekyllBlocker
 
       @title       = data["title"].to_s.strip
       @description = data["description"].to_s.strip
-      @parent      = parent&.id
+      @path        = build_path(parent&.path)
     end
 
     def frontmatter
@@ -49,7 +49,7 @@ module JekyllBlocker
     def block_content
       @block_content ||= begin
         file_path = File.join("_blocker", "pages", @id + ".yml")
-        data = Utilities.read_yaml(@pages_path, @id)
+        data = Utilities.read_yaml(@config.pages_path, @id)
         unless data.instance_of?(Hash)
           raise PageFileError, "Page Content File is not a hash: #{file_path}"
         end
@@ -64,26 +64,18 @@ module JekyllBlocker
       end
     end
 
-    def path(pages)
+    private
+
+    def build_path(parent_path)
       case @id
       when "home"
         "/"
       when "not_found"
         "/404"
       else
-        parts = [@slug]
-        parent_id = @parent
-
-        while parent_id
-          parts << pages[parent_id].slug
-          parent_id = pages[parent_id].parent
-        end
-
-        "/" << parts.reverse.join("/")
+        "#{parent_path.to_s}/#{@slug}"
       end
     end
-
-    private
 
     def set_special(special)
       @id = @layout = @slug = special.to_s
