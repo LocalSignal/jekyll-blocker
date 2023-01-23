@@ -5,6 +5,7 @@ module JekyllBlocker
     def generate(site)
       config = Config.new site.source
       blocks = Blocks.new site.source
+      logger = Logger.new config.logger_path
 
       Jekyll::Hooks.register :site, :pre_render do |site, payload|
         payload["blocker"] = { "config" => config, "blocks" => blocks }

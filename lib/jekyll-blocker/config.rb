@@ -26,5 +26,9 @@ module JekyllBlocker
     def pages_path
       @pages_path ||= File.join(blocker_path, "pages")
     end
+
+    def logger_path
+      @logger_path ||= File.join(root_path, "_log")
+    end
   end
 end

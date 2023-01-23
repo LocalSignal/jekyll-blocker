@@ -28,6 +28,7 @@ require_relative "jekyll-blocker/redirect_collection"
 require_relative "jekyll-blocker/validator"
 require_relative "jekyll-blocker/validator_pages_config"
 require_relative "jekyll-blocker/utilities"
+require_relative "jekyll-blocker/logger"
 
 module JekyllBlocker
   class RootPathNotSetError < StandardError; end
