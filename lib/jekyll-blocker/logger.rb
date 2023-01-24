@@ -11,7 +11,7 @@ module JekyllBlocker
       @path = File.join(logger_path, file_name)
     end
 
-    %w(info error).each do |level|
+    %w(info liquid error).each do |level|
       define_method(level) do |msg|
         write(message(level, msg))
       end

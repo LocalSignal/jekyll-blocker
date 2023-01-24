@@ -37,13 +37,33 @@ class TestConfig < Minitest::Test
 
       time = Time.now
       Time.stub :now, time do
-        logger.error "Test info 1"
-        logger.error "Test info 2"
+        logger.error "Test error 1"
+        logger.error "Test error 2"
 
         file = File.read(logger.path)
         expected = <<~EXPECTED
-          [#{time.strftime("%F %T.%L")}] [error] Test info 1
-          [#{time.strftime("%F %T.%L")}] [error] Test info 2
+          [#{time.strftime("%F %T.%L")}] [error] Test error 1
+          [#{time.strftime("%F %T.%L")}] [error] Test error 2
+        EXPECTED
+
+        assert_equal expected, file
+      end
+    end
+  end
+
+  def test_write_liquid_to_log_file
+    run_in_tmp_folder do |config|
+      logger = JekyllBlocker::Logger.new config.logger_path
+
+      time = Time.now
+      Time.stub :now, time do
+        logger.liquid "Test liquid 1"
+        logger.liquid "Test liquid 2"
+
+        file = File.read(logger.path)
+        expected = <<~EXPECTED
+          [#{time.strftime("%F %T.%L")}] [liquid] Test liquid 1
+          [#{time.strftime("%F %T.%L")}] [liquid] Test liquid 2
         EXPECTED
 
         assert_equal expected, file

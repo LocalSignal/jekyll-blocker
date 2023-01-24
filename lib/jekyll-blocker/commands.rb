@@ -15,6 +15,8 @@ module JekyllBlocker
               puts JekyllBlocker::VERSION
             end
           end
+          # todo command page/redirect generator
+          # todo command for cleaning up new build
           c.command(:new) do |sub_command|
             sub_command.syntax "blocker new [options]"
             sub_command.description 'Setup site to use blocker'

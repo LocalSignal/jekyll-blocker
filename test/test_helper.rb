@@ -14,8 +14,8 @@ end
 
 def run_in_tmp_folder
   tmp_path = File.expand_path(File.join("tmp", SecureRandom.uuid))
-  config   = JekyllBlocker::Config.new tmp_path
   FileUtils.mkdir_p(tmp_path)
+  config   = JekyllBlocker::Config.new tmp_path
   yield config
   FileUtils.rm_rf(tmp_path)
 end

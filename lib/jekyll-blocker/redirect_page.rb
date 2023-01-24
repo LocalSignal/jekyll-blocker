@@ -1,12 +1,14 @@
 module JekyllBlocker
   class RedirectPage < Jekyll::Page
+    attr_reader :redirect_from, :redirect_to
+
     def initialize(site, redirect)
       @site        = site
       @redirect_to = redirect["to"]
-      from = redirect["from"]
+      @redirect_from = redirect["from"]
       @data = {"layout" => nil}
 
-      path = URI.parse(from).path
+      path = URI.parse(@redirect_from).path
       path.sub!(/\/+\z/, '')
 
       if path =~ /\.[0-9a-zA-Z]+/
@@ -17,7 +19,7 @@ module JekyllBlocker
         @name     = split.last
         @data["permalink"] = path
       else
-        @dir      = from
+        @dir      = @redirect_from
         @basename = 'index'
         @ext      = '.html'
         @name     = 'index.html'

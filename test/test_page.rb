@@ -43,13 +43,13 @@ class TestPage < Minitest::Test
       "description" => "page description",
     }
 
-    e = assert_raises(JekyllBlocker::ConfigPageError) do
+    e = assert_raises(JekyllBlocker::PageError) do
       JekyllBlocker::Page.new(data, @config)
     end
 
-    assert_includes e.errors, "No id specified for page"
-    assert_includes e.errors, "No layout specified for page"
-    assert_includes e.errors, "No slug specified for page"
+    assert_includes e.message, "No id specified for page"
+    assert_includes e.message, "No layout specified for page"
+    assert_includes e.message, "No slug specified for page"
   end
 
   def test_a_page_must_have_an_existing_layout
@@ -61,10 +61,10 @@ class TestPage < Minitest::Test
       "description" => "page description",
     }
 
-    e = assert_raises(JekyllBlocker::ConfigPageError) do
+    e = assert_raises(JekyllBlocker::PageError) do
       JekyllBlocker::Page.new(data, @config)
     end
 
-    assert_includes e.errors, "No layout found for page"
+    assert_includes e.message, "No layout found for page"
   end
 end

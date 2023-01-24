@@ -4,8 +4,7 @@ module JekyllBlocker
 
     def generate(site)
       config = Config.new site.source
-      blocks = Blocks.new site.source
-      logger = Logger.new config.logger_path
+      blocks = Blocks.new config.blocks_path
 
       Jekyll::Hooks.register :site, :pre_render do |site, payload|
         payload["blocker"] = { "config" => config, "blocks" => blocks }
@@ -15,6 +14,7 @@ module JekyllBlocker
                                           page.block_content
                                         end
       end
+
       PageCollection.new(config).all.each do |_, page|
         site.pages << VirtualPage.new(site, page)
       end

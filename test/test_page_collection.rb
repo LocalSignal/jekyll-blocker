@@ -3,10 +3,9 @@
 require "test_helper"
 require "securerandom"
 
-class TestConfigPages < Minitest::Test
+class TestPageCollection < Minitest::Test
   def setup
-    path = File.expand_path(File.join("test", "site"))
-    config = JekyllBlocker::Config.new path
+    config = JekyllBlocker::Config.new site_path
     @collection = JekyllBlocker::PageCollection.new(config)
   end
 

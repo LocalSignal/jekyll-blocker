@@ -1,7 +1,7 @@
 module JekyllBlocker
   class PageCollection
     attr_reader :pages
-    def all() @pages end
+    alias all pages
 
     def initialize(config)
       @config = config

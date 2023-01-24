@@ -1,8 +1,9 @@
 module JekyllBlocker
   class VirtualPage < Jekyll::Page
-    attr_accessor :block_content
+    attr_reader :page, :block_content
 
     def initialize(site, page)
+      @page     = page
       @site     = site
       @dir      = page.path
       @basename = 'index'

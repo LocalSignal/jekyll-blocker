@@ -8,11 +8,12 @@ class TestBlockTag < Minitest::Test
              File.read(
                File.join(site_path, "_blocker", "pages", "home.yml")))
 
+    config = JekyllBlocker::Config.new(site_path)
     @ctx = Liquid::Context.new(
       {
         "blocker" => {
-          "config" => JekyllBlocker::Config.new(site_path),
-          "blocks" => JekyllBlocker::Blocks.new(site_path)
+          "config" => config,
+          "blocks" => JekyllBlocker::Blocks.new(config.blocks_path)
         },
         "page_block_content" => data
       },

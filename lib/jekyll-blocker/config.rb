@@ -1,8 +1,14 @@
 module JekyllBlocker
   class Config
     def initialize(root_path)
-      if !root_path.instance_of?(String) || root_path.strip.empty?
-        raise RootPathNotSetError
+      if !root_path.instance_of?(String)
+        raise ConfigError, "Config root path is not a string"
+      end
+      if root_path.strip.empty?
+        raise ConfigError, "Config root path is empty"
+      end
+      if !Dir.exist?(root_path)
+        raise ConfigError, "Config root path does not exist"
       end
       @root_path = root_path
     end

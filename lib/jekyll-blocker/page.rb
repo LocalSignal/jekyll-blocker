@@ -28,7 +28,7 @@ module JekyllBlocker
       end
 
       if errors.any?
-        raise ConfigPageError.new(errors)
+        raise PageError, errors.join("\n")
       end
 
       @title       = data["title"].to_s.strip

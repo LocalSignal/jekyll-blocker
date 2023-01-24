@@ -2,7 +2,8 @@ module JekyllBlocker
   class Blocks
     def initialize(path)
       @blocks = {}
-      glob = File.join(path, "_blocker", "blocks", "*.html")
+      @path = path
+      glob = File.join(path, "**", "*.{html,liquid}")
       paths = Dir[glob]
       paths.each { |path| load_block(path) }
     end
@@ -22,7 +23,16 @@ module JekyllBlocker
         data = YAML.safe_load(Regexp.last_match(1))
       end
 
-      @blocks[File.basename(path, ".*")] = Block.new(content: content, data: data)
+      key = Pathname(
+              path.sub(/\A#{@path}/, '').
+                   sub(/#{File.extname(path)}\z/, '')
+            ).each_filename.to_a.join('/')
+
+      if @blocks.key? key
+        raise BlocksError, "Block '#{key}' exists in multiple extensions"
+      end
+
+      @blocks[key] = Block.new(content: content, data: data)
     end
   end
 end
