@@ -116,4 +116,52 @@ class TestPageCollection < Minitest::Test
       assert_includes e.message, "Root pages key must be an array"
     end
   end
+
+  def test_pages_check_for_pages_dup_keys
+    run_in_tmp_folder do |config|
+      layouts = File.join(config.root_path, "_layouts")
+      FileUtils.mkdir(layouts)
+      FileUtils.touch(File.join(layouts, "home.html"))
+      FileUtils.touch(File.join(layouts, "not_found.html"))
+      FileUtils.touch(File.join(layouts, "page.html"))
+      set_pages_yml(config, {
+        "home" => {
+          "title" => "test",
+          "description" => "test"
+        },
+        "not_found" => {
+          "title" => "test",
+          "description" => "test"
+        },
+        "pages" => [
+          {
+            "id" => "test_dup",
+            "slug" => "title",
+            "layout" => "page",
+            "title" => "test",
+            "description" => "test"
+          },
+          {
+            "id" => "test",
+            "slug" => "title",
+            "layout" => "page",
+            "title" => "test",
+            "description" => "test"
+          },
+          {
+            "id" => "test_dup",
+            "slug" => "title",
+            "layout" => "page",
+            "title" => "test",
+            "description" => "test"
+          },
+        ]
+      })
+      e = assert_raises(JekyllBlocker::ValidationError) do
+        JekyllBlocker::PageCollection.new(config)
+      end
+
+      assert_includes e.message, "Duplicate page ids found: test_dup"
+    end
+  end
 end

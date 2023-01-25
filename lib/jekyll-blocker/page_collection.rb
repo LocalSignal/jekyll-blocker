@@ -13,6 +13,10 @@ module JekyllBlocker
       @pages["not_found"] = Page.new(data["not_found"], config, special: :not_found)
 
       build_pages(data["pages"], nil) do |page|
+        if @pages.key? page.id
+          msg = "config/pages.yml: Duplicate page ids found: #{page.id}"
+          raise ValidationError, msg
+        end
         @pages[page.id] = page
       end
     end
