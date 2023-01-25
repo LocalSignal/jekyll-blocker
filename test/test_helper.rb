@@ -26,3 +26,9 @@ def set_pages_yml(config, data)
   File.open(pages_yml, "w") { |file| file.write(data.to_yaml) }
 end
 
+def set_redirects_yml(config, data)
+  FileUtils.mkdir_p(config.config_path)
+  redirects_yml = File.join(config.config_path, "redirects.yml")
+  File.open(redirects_yml, "w") { |file| file.write(data.to_yaml) }
+end
+
