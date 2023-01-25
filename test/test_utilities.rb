@@ -14,9 +14,11 @@ class TestUtilities < Minitest::Test
   end
 
   def test_cannot_read_yaml_file
-    assert_raises(JekyllBlocker::ConfigFileDoesNotExistError) do
+    e = assert_raises(JekyllBlocker::ValidationError) do
       JekyllBlocker::Utilities.read_yaml(@config.pages_path, "oopps")
     end
+
+    assert_includes e.message, "YAML file does not exist"
   end
 end
 

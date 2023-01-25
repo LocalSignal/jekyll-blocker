@@ -2,11 +2,11 @@
 
 # require "debug"
 
-%w(yaml uri fileutils jekyll tty-table).each do |lib|
+%w(yaml uri fileutils jekyll tty-table tty-screen pastel).each do |lib|
   require lib
 end
 
-Dir[File.join(__dir__, "jekyll-blocker", "*")].each do |lib|
+Dir[File.join(__dir__, "jekyll-blocker", "**", "*")].each do |lib|
   require lib
 end
 

@@ -3,8 +3,8 @@ module JekyllBlocker
     attr_accessor :content, :data
 
     def initialize(content: "", data: {})
-      @content = content if content.instance_of?(String)
-      @data = data if data.instance_of?(Hash)
+      @content = content.instance_of?(String) ? content : ""
+      @data    = data.instance_of?(Hash) ? data : {}
     end
 
     def render(instance_data)

@@ -29,7 +29,7 @@ module JekyllBlocker
             ).each_filename.to_a.join('/')
 
       if @blocks.key? key
-        raise BlocksError, "Block '#{key}' exists in multiple extensions"
+        raise ValidationError, "Block '#{key}' exists in multiple extensions"
       end
 
       @blocks[key] = Block.new(content: content, data: data)

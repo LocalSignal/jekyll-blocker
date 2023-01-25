@@ -16,7 +16,7 @@ module JekyllBlocker
     end
 
     def render(context)
-      blocks = context.environments.first["blocker"]["blocks"]
+      blocks = context.environments.first["blocker_blocks"]
       block  = context.environments.first["page_block_content"].dig("blocks", @id)
 
       return "" unless block.instance_of?(Hash)

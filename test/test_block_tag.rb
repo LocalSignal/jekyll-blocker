@@ -11,10 +11,7 @@ class TestBlockTag < Minitest::Test
     config = JekyllBlocker::Config.new(site_path)
     @ctx = Liquid::Context.new(
       {
-        "blocker" => {
-          "config" => config,
-          "blocks" => JekyllBlocker::Blocks.new(config.blocks_path)
-        },
+        "blocker_blocks" => JekyllBlocker::Blocks.new(config.blocks_path),
         "page_block_content" => data
       },
       {},

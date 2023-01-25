@@ -35,15 +35,6 @@ module JekyllBlocker
               ActionRoutes.new(config).run
             end
           end
-          c.command(:validate) do |sub_command|
-            sub_command.syntax "blocker validate [options]"
-            sub_command.description 'Show site validate'
-            sub_command.alias(:v)
-
-            sub_command.action do |_, options|
-              ActionValidate.new.run
-            end
-          end
 
           c.default_command :version
         end

@@ -20,3 +20,9 @@ def run_in_tmp_folder
   FileUtils.rm_rf(tmp_path)
 end
 
+def set_pages_yml(config, data)
+  FileUtils.mkdir_p(config.config_path)
+  pages_yml = File.join(config.config_path, "pages.yml")
+  File.open(pages_yml, "w") { |file| file.write(data.to_yaml) }
+end
+

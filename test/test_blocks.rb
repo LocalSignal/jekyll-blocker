@@ -25,7 +25,7 @@ class TestBlocks < Minitest::Test
       FileUtils.touch File.join(config.blocks_path, "test.html")
       FileUtils.touch File.join(config.blocks_path, "test.liquid")
 
-      e = assert_raises(JekyllBlocker::BlocksError) do
+      e = assert_raises(JekyllBlocker::ValidationError) do
         JekyllBlocker::Blocks.new(config.blocks_path)
       end
 

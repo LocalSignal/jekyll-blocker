@@ -12,7 +12,7 @@ module JekyllBlocker
 
     def render(context)
       env = context.environments.first
-      blocks = env["blocker"]["blocks"]
+      blocks = env["blocker_blocks"]
       block_container = env["page_block_content"].
                         dig("block_containers", @name)
 

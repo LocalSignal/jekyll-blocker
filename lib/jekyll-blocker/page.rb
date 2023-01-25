@@ -3,33 +3,14 @@ module JekyllBlocker
     attr_accessor :id, :title, :description, :layout, :slug, :path
 
     def initialize(data, config, special: nil, parent: nil)
-      errors = []
       @config = config
 
+      validate_data(data, special)
+
       set_special(special) if special
-
-      @id ||= data["id"].to_s.strip
-      if @id.empty?
-        errors << "No id specified for page"
-      end
-
+      @id     ||= data["id"].to_s.strip
       @layout ||= data["layout"].to_s.strip
-      if @layout.empty?
-        errors << "No layout specified for page"
-      elsif !File.exist?(
-              File.expand_path(
-                File.join(@config.blocker_path, "..", "_layouts", "#{@layout}.html")))
-        errors << "No layout found for page"
-      end
-
-      @slug ||= data["slug"].to_s.strip
-      if @slug.empty?
-        errors << "No slug specified for page"
-      end
-
-      if errors.any?
-        raise PageError, errors.join("\n")
-      end
+      @slug   ||= data["slug"].to_s.strip
 
       @title       = data["title"].to_s.strip
       @description = data["description"].to_s.strip
@@ -66,6 +47,15 @@ module JekyllBlocker
 
     private
 
+    def error_message(id, message)
+      label = if id.nil? || id.to_s.strip.empty?
+                "Unknown Page"
+              else
+                "Page #{id}"
+              end
+      "config/pages.yml #{label}: #{message}"
+    end
+
     def build_path(parent_path)
       case @id
       when "home"
@@ -77,8 +67,87 @@ module JekyllBlocker
       end
     end
 
+    def validate_data(data, special)
+      # make sure the page data is a hash
+      unless data.instance_of? Hash
+        msg = "Cannot create page from non hash value"
+        raise ValidationError, error_message(nil, msg)
+      end
+
+      id = special.nil? ? data["id"].to_s.strip : special.to_s
+
+      # check for unwanted keys
+      unwanted_keys = if special.nil?
+                        %w(id title description layout slug pages)
+                      else
+                        %w(title description)
+                      end
+      unwanted = data.keys - unwanted_keys
+      if unwanted.any?
+        msg = "The following invalid page keys were found: #{unwanted.join(', ')}"
+        raise ValidationError, error_message(id, msg)
+      end
+
+      # check for needed keys
+      needed_keys = if special.nil?
+                        %w(id title description layout slug)
+                      else
+                        %w(title description)
+                      end
+      needed = needed_keys - data.keys
+      if needed.any?
+        msg = "The following page keys were not found: #{needed.join(", ")}"
+        raise ValidationError, error_message(id, msg)
+      end
+
+      #check that id is some sort of value
+      if id.empty?
+        raise ValidationError, error_message(nil, "Page cannot have an empty id")
+      end
+
+      # check for layout
+      layout = special.nil? ? data["layout"].to_s.strip : special.to_s
+      if layout.empty?
+        msg = "No layout specified for page"
+        raise ValidationError, error_message(id, msg)
+      elsif !File.exist?(File.join(@config.root_path, "_layouts", "#{layout}.html"))
+        msg = "Layout specified does not exist in layouts folder"
+        raise ValidationError, error_message(id, msg)
+      end
+
+      # check for slug
+      if special.nil?
+        if data["slug"].to_s.strip.empty?
+          msg = "No slug specified for page"
+          raise ValidationError, error_message(id, msg)
+        end
+      end
+
+      # check title
+      if data["title"].to_s.strip.empty?
+        msg = "Title cannot be empty"
+        raise ValidationError, error_message(id, msg)
+      end
+
+      # check description
+      if data["description"].to_s.strip.empty?
+        msg = "Description cannot be empty"
+        raise ValidationError, error_message(id, msg)
+      end
+
+      # check pages
+      if data["pages"]
+        unless data["pages"].instance_of?(Array)
+          msg = "Pages must be an array"
+          raise ValidationError, error_message(id, msg)
+        end
+      end
+    end
+
     def set_special(special)
-      @id = @layout = @slug = special.to_s
+      @id     = special.to_s
+      @layout = special.to_s
+      @slug   = special.to_s
     end
   end
 end
