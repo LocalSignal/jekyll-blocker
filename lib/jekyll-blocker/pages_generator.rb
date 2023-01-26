@@ -8,6 +8,7 @@ module JekyllBlocker
       config = site.config["blocker"]["config"]
 
       PageCollection.new(config).all.each do |_, page|
+        page.load_block_content
         site.pages << VirtualPage.new(site, page)
       end
       RedirectCollection.new(config).all.each do |redirect|

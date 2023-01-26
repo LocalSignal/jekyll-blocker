@@ -32,12 +32,10 @@ class TestBlockTag < Minitest::Test
     template = Liquid::Template.parse(doc)
     out = template.render(@ctx)
     assert_equal "<h1>This is the footer</h1>", out.strip
-  # rescue => e
-  #   binding.break
   end
 
   def test_block_needs_a_param
-    assert_raises(JekyllBlocker::BlockParamsError) do
+    assert_raises(Liquid::SyntaxError) do
       doc = "{% block %}"
       template = Liquid::Template.parse(doc)
       out = template.render(@ctx)
@@ -45,7 +43,7 @@ class TestBlockTag < Minitest::Test
   end
 
   def test_block_max_two_param
-    assert_raises(JekyllBlocker::BlockParamsError) do
+    assert_raises(Liquid::SyntaxError) do
       doc = "{% block one two three %}"
       template = Liquid::Template.parse(doc)
       out = template.render(@ctx)

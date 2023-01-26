@@ -212,4 +212,111 @@ class TestPage < Minitest::Test
 
     assert_includes e.message, "Pages must be an array"
   end
+
+  def test_a_page_content_file_must_exist
+    run_in_tmp_folder do |config|
+      setup_page_content_files(config, nil)
+
+      e = assert_raises(JekyllBlocker::ValidationError) do
+        JekyllBlocker::Page.new(content_page, config).load_block_content
+      end
+
+      assert_includes e.message, "YAML file does not exist"
+    end
+  end
+
+  def test_a_page_content_file_must_be_hash
+    run_in_tmp_folder do |config|
+      setup_page_content_files(config, [1,2,3])
+
+      e = assert_raises(JekyllBlocker::ValidationError) do
+        JekyllBlocker::Page.new(content_page, config).load_block_content
+      end
+
+      assert_includes e.message, "Page Content File root is not a hash"
+    end
+  end
+
+  def test_a_page_content_file_must_have_blocks_hash
+    run_in_tmp_folder do |config|
+      setup_page_content_files(config, {
+        "blocks" => "",
+        "block_containers" => {}
+      })
+
+      e = assert_raises(JekyllBlocker::ValidationError) do
+        JekyllBlocker::Page.new(content_page, config).load_block_content
+      end
+
+      assert_includes e.message, "Page Content File does not contain a blocks hash"
+    end
+  end
+
+  def test_a_page_content_file_must_have_block_containers_hash
+    run_in_tmp_folder do |config|
+      setup_page_content_files(config, {
+        "blocks" => {},
+        "block_containers" => ""
+      })
+
+      e = assert_raises(JekyllBlocker::ValidationError) do
+        JekyllBlocker::Page.new(content_page, config).load_block_content
+      end
+
+      assert_includes e.message, "Page Content File does not contain a block_containers hash"
+    end
+  end
+
+  def test_a_page_content_file_unwanted_keys
+    run_in_tmp_folder do |config|
+      setup_page_content_files(config, {
+        "blocks" => {},
+        "foo" => "",
+        "block_containers" => "",
+        "bar" => ""
+      })
+
+      e = assert_raises(JekyllBlocker::ValidationError) do
+        JekyllBlocker::Page.new(content_page, config).load_block_content
+      end
+
+      assert_includes e.message, "Invalid page content keys were found: foo, bar"
+    end
+  end
+
+  def test_a_page_content_file_missing_keys
+    run_in_tmp_folder do |config|
+      setup_page_content_files(config, {})
+
+      e = assert_raises(JekyllBlocker::ValidationError) do
+        JekyllBlocker::Page.new(content_page, config).load_block_content
+      end
+
+      assert_includes e.message, "Needed page content keys were not found: blocks, block_containers"
+    end
+  end
+
+  private
+
+  def setup_page_content_files(config, data=nil)
+    FileUtils.mkdir_p(File.join(config.root_path, "_layouts"))
+    FileUtils.touch(File.join(config.root_path, "_layouts", "page.html"))
+    FileUtils.mkdir_p(config.pages_path)
+
+    return unless data
+
+    File.open(File.join(config.pages_path, "test.yml"), "w") do |file|
+      file.write(data.to_yaml)
+    end
+  end
+
+  def content_page
+    {
+      "id" => "test",
+      "slug" => "title",
+      "layout" => "page",
+      "title" => "test",
+      "description" => "test"
+    }
+  end
 end

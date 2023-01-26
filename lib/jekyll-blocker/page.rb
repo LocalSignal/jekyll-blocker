@@ -1,11 +1,11 @@
 module JekyllBlocker
   class Page
-    attr_accessor :id, :title, :description, :layout, :slug, :path
+    attr_reader :id, :title, :description, :layout, :slug, :path
 
     def initialize(data, config, special: nil, parent: nil)
       @config = config
 
-      validate_data(data, special)
+      validate(data, special)
 
       set_special(special) if special
       @id     ||= data["id"].to_s.strip
@@ -28,21 +28,13 @@ module JekyllBlocker
     end
 
     def block_content
-      @block_content ||= begin
-        file_path = File.join("_blocker", "pages", @id + ".yml")
-        data = Utilities.read_yaml(@config.pages_path, @id)
-        unless data.instance_of?(Hash)
-          raise PageFileError, "Page Content File is not a hash: #{file_path}"
-        end
-        unless data["blocks"].instance_of?(Hash)
-          raise PageFileError, "Page Content File does not contain a blocks hash: #{file_path}"
-        end
-        unless data["block_containers"].instance_of?(Hash)
-          message = "Page Content File does not contain a block_containers hash: #{file_path}"
-          raise PageFileError, message
-        end
-        data
-      end
+      @block_content ||= load_block_content
+    end
+
+    def load_block_content
+      data = Utilities.read_yaml(@config.pages_path, @id)
+      validate_content data
+      data
     end
 
     private
@@ -67,7 +59,7 @@ module JekyllBlocker
       end
     end
 
-    def validate_data(data, special)
+    def validate(data, special)
       # make sure the page data is a hash
       unless data.instance_of? Hash
         msg = "Cannot create page from non hash value"
@@ -141,6 +133,36 @@ module JekyllBlocker
           msg = "Pages must be an array"
           raise ValidationError, error_message(id, msg)
         end
+      end
+    end
+
+    def validate_content(data)
+      unless data.instance_of?(Hash)
+        raise ValidationError, "pages/#{@id}.yml: Page Content File root is not a hash"
+      end
+
+      # check for unwanted keys
+      unwanted = data.keys - %w(blocks block_containers)
+      if unwanted.any?
+        msg = "pages/#{@id}.yml: Invalid page content keys were found: #{unwanted.join(', ')}"
+        raise ValidationError, msg
+      end
+
+      # check for needed keys
+      needed = %w(blocks block_containers) - data.keys
+      if needed.any?
+        msg = "pages/#{@id}.yml: Needed page content keys were not found: #{needed.join(", ")}"
+        raise ValidationError, msg
+      end
+
+      unless data["blocks"].instance_of?(Hash)
+        msg = "pages/#{@id}.yml: Page Content File does not contain a blocks hash"
+        raise ValidationError, msg
+      end
+
+      unless data["block_containers"].instance_of?(Hash)
+        msg = "pages/#{@id}.yml: Page Content File does not contain a block_containers hash"
+        raise ValidationError, msg
       end
     end
 

@@ -1,8 +1,8 @@
 module JekyllBlocker
   class BlockTag < Liquid::Tag
-    def initialize(tag_name, info, tokens)
+    def initialize(tag_name, params, parse_context)
       super
-      parts = info.to_s.strip.split.compact
+      parts = params.to_s.strip.split.compact
 
       if parts.count == 1
         @name = parts.first
@@ -11,7 +11,7 @@ module JekyllBlocker
         @name = parts.first
         @id = parts.last
       else
-        raise BlockParamsError
+        raise Liquid::SyntaxError, "block tag expects 1..2 arguments, #{parts.count} given"
       end
     end
 
