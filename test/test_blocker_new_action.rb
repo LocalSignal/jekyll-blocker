@@ -7,7 +7,7 @@ class TestActionNew < Minitest::Test
   def test_will_not_continue_if_does_not_appear_to_be_jekyll_site
     run_in_tmp_folder do |config|
       assert_raises(JekyllBlocker::NotJekyllSiteError) do
-        JekyllBlocker::ActionNew.new(config).run
+        JekyllBlocker::Action::New.new(config).run
       end
     end
   end
@@ -19,7 +19,7 @@ class TestActionNew < Minitest::Test
       FileUtils.mkdir(File.join(config.root_path, "_blocker"))
 
       assert_raises(JekyllBlocker::ContainsBlockerFolderError) do
-        JekyllBlocker::ActionNew.new(config).run
+        JekyllBlocker::Action::New.new(config).run
       end
     end
   end
@@ -29,7 +29,7 @@ class TestActionNew < Minitest::Test
       FileUtils.touch(File.join(config.root_path, "_config.yml"))
       FileUtils.touch(File.join(config.root_path, "Gemfile"))
 
-      action = JekyllBlocker::ActionNew.new(config)
+      action = JekyllBlocker::Action::New.new(config)
       action.run
 
       assert Dir.exist?(File.join(config.root_path, "_blocker", "blocks"))

@@ -1,5 +1,5 @@
 module JekyllBlocker
-  class ActionRoutes < Action
+  class Action::Routes < Action
     def run
       super
 

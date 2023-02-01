@@ -1,5 +1,5 @@
 module JekyllBlocker
-  class ActionNew < Action
+  class Action::New < Action
     def run
       super
 
@@ -21,8 +21,9 @@ module JekyllBlocker
 
     def pages_yml
       <<~HERE
-        title: Home Page
-        description: Home Page
+        home:
+          title: Home Page
+          description: Home Page
         not_found:
           title: Page Not Found
           description: Page Not Found

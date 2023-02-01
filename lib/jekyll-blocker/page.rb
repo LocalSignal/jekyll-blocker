@@ -1,6 +1,6 @@
 module JekyllBlocker
   class Page
-    attr_reader :id, :title, :description, :layout, :slug, :path
+    attr_reader :id, :title, :description, :layout, :slug, :parent, :path
 
     def initialize(data, config, special: nil, parent: nil)
       @config = config
@@ -15,6 +15,7 @@ module JekyllBlocker
       @title       = data["title"].to_s.strip
       @description = data["description"].to_s.strip
       @path        = build_path(parent&.path)
+      @parent      = data["parent"] || parent&.id
     end
 
     def frontmatter
@@ -35,6 +36,23 @@ module JekyllBlocker
       data = Utilities.read_yaml(@config.pages_path, @id)
       validate_content data
       data
+    end
+
+    def to_h
+      if %w(home not_found).include?(@id)
+        {
+          "title" => @title,
+          "description" => @description,
+        }
+      else
+        {
+          "id" => @id,
+          "title" => @title,
+          "description" => @description,
+          "slug" => @slug,
+          "layout" => @layout
+        }
+      end
     end
 
     private
@@ -70,7 +88,7 @@ module JekyllBlocker
 
       # check for unwanted keys
       unwanted_keys = if special.nil?
-                        %w(id title description layout slug pages)
+                        %w(id title description layout slug pages parent)
                       else
                         %w(title description)
                       end

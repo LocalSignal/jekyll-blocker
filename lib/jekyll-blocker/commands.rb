@@ -15,15 +15,13 @@ module JekyllBlocker
               puts JekyllBlocker::VERSION
             end
           end
-          # todo command page/redirect generator
-          # todo command for cleaning up new build
           c.command(:new) do |sub_command|
             sub_command.syntax "blocker new [options]"
             sub_command.description 'Setup site to use blocker'
             sub_command.alias(:n)
 
             sub_command.action do |_, options|
-              ActionNew.new(config).run
+              Action::New.new(config).run
             end
           end
           c.command(:routes) do |sub_command|
@@ -32,7 +30,16 @@ module JekyllBlocker
             sub_command.alias(:r)
 
             sub_command.action do |_, options|
-              ActionRoutes.new(config).run
+              Action::Routes.new(config).run
+            end
+          end
+          c.command(:generate) do |sub_command|
+            sub_command.syntax "generate type [options]"
+            sub_command.description 'Generate a new blocker file'
+            sub_command.alias(:g)
+
+            sub_command.action do |args, options|
+              Action::Generate.new(config).run(args, options)
             end
           end
 
