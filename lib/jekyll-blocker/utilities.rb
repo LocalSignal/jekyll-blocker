@@ -1,15 +1,15 @@
 module JekyllBlocker
   class Utilities
     class << self
-      def read_yaml(path, name)
-        file_path = File.join(path, "#{name}.yml")
+      def read_jekyll_file(path)
+        out = { data: {}, content: File.read(path) }
 
-        unless File.exist?(file_path)
-          message = "YAML file does not exist\n#{file_path}"
-          raise ValidationError, message
+        if out[:content] =~ Jekyll::Document::YAML_FRONT_MATTER_REGEXP
+          out[:content] = Regexp.last_match.post_match
+          out[:data] = YAML.safe_load(Regexp.last_match(1))
         end
 
-        YAML.safe_load(File.read(file_path))
+        out
       end
 
       def final_message(error=nil)

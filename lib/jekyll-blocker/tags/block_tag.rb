@@ -5,8 +5,7 @@ module JekyllBlocker
       parts = params.to_s.strip.split.compact
 
       if parts.count == 1
-        @name = parts.first
-        @id = parts.first
+        @name = @id = parts.first.strip
       elsif parts.count == 2
         @name = parts.first
         @id = parts.last
@@ -16,13 +15,13 @@ module JekyllBlocker
     end
 
     def render(context)
-      blocks = context.environments.first["blocker_blocks"]
-      block  = context.environments.first["page_block_content"].dig("blocks", @id)
+      blocks = context.registers[:site].config["blocks"]
+      block  = context.registers.dig(:page, "blocks", @id) ||
+               { "type" => @name, "fields" => {} }
 
-      return "" unless block.instance_of?(Hash)
-      raise BlockTypeDataTypeMissmatchError unless @name == block["block"]
+      raise BlockerError unless @name == block["type"]
 
-      BlockRenderer.new(blocks.find(@name), block["fields"]).render
+      blocks.find(@name).render(block["fields"])
     end
   end
 end

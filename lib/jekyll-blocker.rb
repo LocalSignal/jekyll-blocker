@@ -9,7 +9,7 @@
   require lib
 end
 
-Dir[File.join(__dir__, "jekyll-blocker", "**", "*")].each do |lib|
-  require lib
-end
+Dir[File.join(__dir__, "jekyll-blocker", "**", "*")].
+  select { |path| File.file?(path) }.
+  each { |lib| require lib }
 

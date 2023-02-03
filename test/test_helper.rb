@@ -15,20 +15,7 @@ end
 def run_in_tmp_folder
   tmp_path = File.expand_path(File.join("tmp", SecureRandom.uuid))
   FileUtils.mkdir_p(tmp_path)
-  config   = JekyllBlocker::Config.new tmp_path
-  yield config
+  yield tmp_path
   FileUtils.rm_rf(tmp_path)
-end
-
-def set_pages_yml(config, data)
-  FileUtils.mkdir_p(config.config_path)
-  pages_yml = File.join(config.config_path, "pages.yml")
-  File.open(pages_yml, "w") { |file| file.write(data.to_yaml) }
-end
-
-def set_redirects_yml(config, data)
-  FileUtils.mkdir_p(config.config_path)
-  redirects_yml = File.join(config.config_path, "redirects.yml")
-  File.open(redirects_yml, "w") { |file| file.write(data.to_yaml) }
 end
 

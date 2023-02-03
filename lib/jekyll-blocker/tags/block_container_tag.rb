@@ -12,20 +12,15 @@ module JekyllBlocker
     end
 
     def render(context)
-      env = context.environments.first
-      blocks = env["blocker_blocks"]
-      block_container = env["page_block_content"].
-                        dig("block_containers", @name)
+      blocks          = context.registers[:site].config["blocks"]
+      block_container = context.registers.dig(:page, "block_containers", @name) ||
+                        super.split.map do |block|
+                          { "type" => block, "fields" => {} }
+                        end
 
       out = ""
       block_container.each do |block|
-        begin
-          out << BlockRenderer.new(blocks.find(block["block"]), block["fields"]).render
-        rescue NamedBlockDoesNotExistError
-          id = context.registers.dig(:page, "blocker_page_id")
-          message = "Block '#{block["block"]}' does not exist in page '#{id}'"
-          raise NamedBlockDoesNotExistError, message
-        end
+        out << blocks.find(block["type"]).render(block["fields"])
       end
       out
     end

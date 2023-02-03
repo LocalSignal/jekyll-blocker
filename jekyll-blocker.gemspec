@@ -8,12 +8,10 @@ Gem::Specification.new do |spec|
   spec.authors = ["Ryan Slack"]
   spec.email = ["rslack@localsignal.com"]
 
-  spec.summary = "Jekyll plugin that builds pages from sitemap, layouts and section blocks"
+  spec.summary = "Jekyll plugin for block and block_container tags"
   spec.homepage = "https://github.com/LocalSignal/jekyll-blocker"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
-
-  # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = spec.homepage
@@ -27,12 +25,15 @@ Gem::Specification.new do |spec|
   # end
   spec.files = `git ls-files -z`.split("\x0").grep(%r!^lib/!)
 
+  spec.bindir = "bin"
+  spec.executables << "blocker"
   spec.require_paths = ["lib"]
 
   spec.add_dependency "jekyll", ">= 3.8", "< 5.0"
   spec.add_dependency "tty-table", "~> 0.12"
   spec.add_dependency "tty-screen", "~> 0.8"
   spec.add_dependency "tty-prompt", "~> 0.23"
+  spec.add_dependency "tty-command", "~> 0.10"
   spec.add_dependency "pastel", "~> 0.8"
 
   spec.add_development_dependency "rake", "~> 13.0"

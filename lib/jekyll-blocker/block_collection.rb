@@ -1,10 +1,10 @@
 module JekyllBlocker
-  class Blocks
-    def initialize(path)
+  class BlockCollection
+    def initialize(folder)
       @blocks = {}
-      @path = path
-      glob = File.join(path, "**", "*.{html,liquid}")
-      paths = Dir[glob]
+      @path = File.join(folder, "_blocks")
+
+      paths = Dir[File.join(@path, "**", "*.{html,liquid}")]
       paths.each { |path| load_block(path) }
     end
 
@@ -15,13 +15,7 @@ module JekyllBlocker
     private
 
     def load_block(path)
-      data = {}
-      content = File.read(path)
-
-      if content =~ Jekyll::Document::YAML_FRONT_MATTER_REGEXP
-        content = Regexp.last_match.post_match
-        data = YAML.safe_load(Regexp.last_match(1))
-      end
+      file = Utilities.read_jekyll_file(path)
 
       key = Pathname(
               path.sub(/\A#{@path}/, '').
@@ -32,7 +26,7 @@ module JekyllBlocker
         raise ValidationError, "Block '#{key}' exists in multiple extensions"
       end
 
-      @blocks[key] = Block.new(content: content, data: data)
+      @blocks[key] = Block.new(content: file[:content], data: file[:data])
     end
   end
 end

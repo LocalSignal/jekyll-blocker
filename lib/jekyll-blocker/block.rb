@@ -14,7 +14,7 @@ module JekyllBlocker
         _data[key] = instance_data.key?(key) ? instance_data[key] : value["value"]
       end
 
-      template = Liquid::Template.parse(content)
+      template = Liquid::Template.parse(@content)
       template.render(_data)
     end
   end
