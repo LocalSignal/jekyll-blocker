@@ -7,15 +7,15 @@ module JekyllBlocker
       @data    = data.instance_of?(Hash) ? data : {}
     end
 
-    def render(instance_data)
-      _data = {}
+    def render(instance_data, context)
+      _context = context.dup
 
       data.each do |key, value|
-        _data[key] = instance_data.key?(key) ? instance_data[key] : value["value"]
+        _context[key] = instance_data.key?(key) ? instance_data[key] : value["value"]
       end
 
       template = Liquid::Template.parse(@content)
-      template.render(_data)
+      template.render(_context)
     end
   end
 end

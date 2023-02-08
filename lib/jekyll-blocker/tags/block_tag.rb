@@ -21,7 +21,7 @@ module JekyllBlocker
 
       raise BlockerError unless @name == block["type"]
 
-      blocks.find(@name).render(block["fields"])
+      blocks.find(@name).render(block["fields"], context)
     end
   end
 end

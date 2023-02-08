@@ -22,7 +22,7 @@ module JekyllBlocker
 
       out = ""
       block_container.each do |block|
-        out << blocks.find(block["type"]).render(block["fields"])
+        out << blocks.find(block["type"]).render(block["fields"], context)
       end
       out
     end

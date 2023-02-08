@@ -1,0 +1,16 @@
+- text: Home
+  type: page
+  value: home
+- text: Products
+  type: text
+  value: /products
+  children:
+  - text: Product 1
+    type: text
+    value: /product-1
+  - text: Product 2
+    type: text
+    value: /product-2
+- text: About Us
+  type: page
+  value: about-us
