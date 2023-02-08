@@ -1,2 +1,49 @@
 #!/usr/bin/env ruby
 
+require "thor"
+require "jekyll-blocker"
+
+class BlockerCLI < Thor
+  desc "new PATH", "create a new jekyll site setup for blocker in PATH"
+  def new(path)
+    pastel = Pastel.new
+    full_path = File.expand_path(path)
+
+    if Dir.exist?(full_path)
+      if !Dir.empty?(full_path)
+        error = "The path is not empty. Cannot create new jekyll-blocker project."
+        puts pastel.red(error)
+        exit
+      end
+    else
+      FileUtils.mkdir_p(full_path)
+    end
+
+    FileUtils.cp_r(File.join(
+                     File.expand_path(
+                       File.join(__dir__, "..", "lib", "new_site")), '.'),
+                   full_path)
+
+    puts pastel.cyan("Copied Files:")
+    Dir.glob(File.join(full_path, "**", "*"), File::FNM_DOTMATCH).
+        select{|file| File.file?(file)}.
+        each do |file|
+          puts "  " + file.sub(/\A#{full_path}#{File::SEPARATOR}/, '')
+        end
+
+    Dir.chdir(full_path) do
+      puts pastel.cyan("\nBundling:")
+      puts `bundle`
+
+      puts pastel.cyan("\nMaking Git repo")
+      puts `git init`
+    end
+  end
+
+  desc "version", "jekyll-blocker version"
+  def version
+    puts JekyllBlocker::VERSION
+  end
+end
+
+BlockerCLI.start(ARGV)

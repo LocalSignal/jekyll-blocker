@@ -16,8 +16,8 @@ module JekyllBlocker
 
     def render(context)
       blocks = context.registers[:site].config["blocks"]
-      block  = context.registers.dig(:page, "blocks", @id) ||
-               { "type" => @name, "fields" => {} }
+      page_blocks = context.registers[:page]["blocks"] || {}
+      block  = page_blocks[@id] || { "type" => @name, "fields" => {} }
 
       raise BlockerError unless @name == block["type"]
 

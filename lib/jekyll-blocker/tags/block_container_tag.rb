@@ -12,11 +12,13 @@ module JekyllBlocker
     end
 
     def render(context)
-      blocks          = context.registers[:site].config["blocks"]
-      block_container = context.registers.dig(:page, "block_containers", @name) ||
+      blocks           = context.registers[:site].config["blocks"]
+      block_containers = context.registers[:page]["block_containers"] || {}
+      block_container = block_containers[@name] ||
                         super.split.map do |block|
                           { "type" => block, "fields" => {} }
                         end
+
 
       out = ""
       block_container.each do |block|

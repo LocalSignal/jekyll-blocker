@@ -11,29 +11,6 @@ module JekyllBlocker
 
         out
       end
-
-      def final_message(error=nil)
-        pastel = Pastel.new
-
-        msg = if error
-                error.message
-              else
-                "Successfully completed blocker build"
-              end
-
-        msg = <<~MESSAGE
-
-          #{"-" * TTY::Screen.width}
-          #{msg}
-          #{"-" * TTY::Screen.width}
-        MESSAGE
-
-        if error
-          pastel.red(msg)
-        else
-          pastel.green(msg)
-        end
-      end
     end
   end
 end

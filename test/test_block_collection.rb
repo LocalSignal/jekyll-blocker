@@ -19,7 +19,7 @@ class TestBlockCollection < Minitest::Test
 
   def test_same_block_different_extension_error
     run_in_tmp_folder do |path|
-      blocks_path = File.join(path, "_blocks")
+      blocks_path = File.join(path, "_blocker", "blocks")
       FileUtils.mkdir_p blocks_path
       FileUtils.touch File.join(blocks_path, "test.html")
       FileUtils.touch File.join(blocks_path, "test.liquid")

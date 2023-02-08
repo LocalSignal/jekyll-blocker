@@ -2,10 +2,7 @@
 
 # require "debug"
 
-%w(
-  yaml uri fileutils jekyll securerandom
-  tty-table tty-screen tty-prompt pastel
-).each do |lib|
+%w(yaml uri fileutils jekyll securerandom pastel).each do |lib|
   require lib
 end
 

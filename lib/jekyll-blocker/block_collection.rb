@@ -2,7 +2,7 @@ module JekyllBlocker
   class BlockCollection
     def initialize(folder)
       @blocks = {}
-      @path = File.join(folder, "_blocks")
+      @path = File.join(folder, "_blocker", "blocks")
 
       paths = Dir[File.join(@path, "**", "*.{html,liquid}")]
       paths.each { |path| load_block(path) }
