@@ -1,16 +1,6 @@
 - text: Home
   type: page
   value: home
-- text: Products
+- text: A Post
   type: text
-  value: /products
-  children:
-  - text: Product 1
-    type: text
-    value: /product-1
-  - text: Product 2
-    type: text
-    value: /product-2
-- text: About Us
-  type: page
-  value: about-us
+  value: /jekyll/update/2023/02/03/welcome-to-jekyll.html

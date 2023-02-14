@@ -24,8 +24,12 @@ module JekyllBlocker
   end
   Jekyll::Hooks.register :pages, :pre_render do |page, payload|
     # set globals merged data, site and layout
+    payload["globals"] = page.site.config["globals"]
+
     layout = page.site.layouts[page["layout"]]
-    payload["globals"] = page.site.config["globals"].merge(layout.data["globals"])
+    if layout
+      payload["globals"].merge!(layout.data["globals"])
+    end
   end
   Jekyll::Hooks.register :posts, :pre_render do |post, payload|
     # set globals merged data, site and layout

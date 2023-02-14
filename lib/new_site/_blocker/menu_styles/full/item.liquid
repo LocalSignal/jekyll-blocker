@@ -1,0 +1,19 @@
+{% if children %}
+<div class="navbar-item has-dropdown is-hoverable">
+  <a class="navbar-link {{classes}} {% if page.url == url %}is-active{% endif %}" {% if url %}href="{{url}}"{% endif %}>
+    {{text}}
+  </a>
+
+  <div class="navbar-dropdown">
+    {{children}}
+  </div>
+</div>
+{% else %}
+<a
+  class="navbar-item {{classes}} {% if page.url == url %}is-active{% endif %}"
+  href="{{url}}"
+>
+  {{text}}
+</a>
+{% endif %}
+

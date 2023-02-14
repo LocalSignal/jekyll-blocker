@@ -13,7 +13,6 @@ module JekyllBlocker
         @pages[key] = Page.new
       end
 
-      binding.break
     end
 
     def find(id)
